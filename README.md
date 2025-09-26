@@ -1,2 +1,2 @@
 # modulefinder-revamped
-An attempt at redoing Python's modulefinder module in the standard library.
+An attempt at redoing Python's modulefinder module in the standard library, for fun.
