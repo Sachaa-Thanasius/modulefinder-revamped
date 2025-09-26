@@ -1,0 +1,176 @@
+[build-system]
+requires = ["flit_core>=3.12,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "modulefinder-revamped"
+version = "0.1.0"
+description = "An attempt at redoing Python's modulefinder module in the standard library, for fun."
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE*"]
+readme = { file = "README.md", content-type = "text/markdown" }
+authors = [{ name = "Sachaa-Thanasius", email = "sachaathanasius@gmail.com" }]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
+
+[dependency-groups]
+test = ["pytest>=8"]
+cov = ["coverage>=7", "covdefaults"]
+dev = [{ include-group = "test" }, { include-group = "cov" }]
+
+
+# -------- Test config --------
+
+[tool.pytest.ini_options]
+addopts = ["--import-mode=importlib", "--strict-markers", "--strict-config"]
+filterwarnings = ["error"]
+
+[tool.coverage.run]
+plugins = ["covdefaults"]
+source = ["modulefinder_revamped", "test_modulefinder"]
+parallel = true
+
+[tool.coverage.paths]
+defer_imports = ["*/site-packages"]
+
+[tool.coverage.report]
+fail_under = 90
+
+
+# -------- Linter config --------
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "A",
+    "ANN",
+    "ASYNC",
+    "B",
+    "BLE",
+    "C4",
+    "COM",
+    "DTZ",
+    "E",
+    "EM",
+    "ERA",
+    "F",
+    "FURB",
+    "G",
+    "I",
+    "ICN",
+    "INP",
+    "ISC",
+    "LOG",
+    "NPY",
+    "PD",
+    "PERF",
+    "PGH",
+    "PIE",
+    "PL",
+    "PT",
+    "PTH",
+    "PYI",
+    "RET",
+    "RSE",
+    "RUF",
+    "S",
+    "SIM",
+    "SLOT",
+    "T10",
+    "T20",
+    "TC",
+    "TID",
+    "TRY",
+    "UP",
+    "W",
+    "YTT",
+    # "FBT",
+]
+extend-ignore = [
+    # ---- General
+    "S101",    # Use of assert here is a known quantity for typing cases. All uses should be safe to optimize out.
+    "SIM105",  # Suppressable exception. contextlib.suppress is a stylistic choice with overhead.
+    "C90",     # McCabe complexity.
+    "ANN204",  # Special method return types are usually implicit and/or known by type checker.
+    "ANN401",  # Any is needed for some annotations.
+    "PT001",   # pytest recommends against empty parentheses on pytest.fixture.
+    "TC001",   # Don't eagerly put things in TYPE_CHECKING blocks.
+    "TC002",   # Don't eagerly put things in TYPE_CHECKING blocks.
+    "TC003",   # Don't eagerly put things in TYPE_CHECKING blocks.
+    "PD011",   # Erroneous issue that triggers for any .values attribute access at all.
+    "PLR2004", # "Magic number" depends on the use case.
+    "RUF002",  # "Ambiguous character" depends on the use case.
+    "RUF003",  # "Ambiguous character" depends on the use case.
+    "RUF022",  # __all__ ordering can be meaningful.
+    "RUF023",  # __slots__ ordering can be meaningful.
+    "PLC0415", # There are valid reasons to not have imports at the top level.
+
+    # ---- Recommended by Ruff when using Ruff format
+    "W191",
+    "E111",
+    "E114",
+    "E117",
+    "E501",
+    "COM812",
+    "COM819",
+    "ISC001",
+    "ISC002",
+    "W291",   # Not recommended, but ruff format handles it as well.
+    "W293",   # Not recommended, but ruff format handles it as well.
+
+    # ---- Project-specific rules
+    "PTH120",
+    "PTH122",
+    "PTH208",
+    # "T201",
+    # Readability.
+    "SIM108",  # if-else instead of a ternary.
+    "RET505",  # elif/else after return.
+    "RET507",  # elif/else after continue.
+    "RET508",  # elif/else after break.
+    "PLR5501", # if within else block instead of elif.
+]
+unfixable = [
+    "ERA", # Prevent unlikely erroneous deletion.
+]
+
+[tool.ruff.lint.isort]
+lines-after-imports = 2
+combine-as-imports = true
+
+[tool.ruff.lint.pyupgrade]
+keep-runtime-typing = true
+
+[tool.ruff.lint.flake8-implicit-str-concat]
+allow-multiline = false
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.per-file-ignores]
+# ---- Test code
+"test_*.py" = [
+    # Don't need return annotations in tests.
+    "ANN201",
+    "ANN202",
+]
+
+
+# -------- Type-checker config --------
+
+[tool.pyright]
+include = ["*.py"]
+typeCheckingMode = "strict"
+reportUnnecessaryTypeIgnoreComment = "warning"
